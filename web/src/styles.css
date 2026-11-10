@@ -1,0 +1,392 @@
+@import 'tailwindcss';
+
+/* Subset of Material Symbols Rounded (Apache-2.0) bundled so icons render instantly and offline. Regenerate when adding icons. */
+@font-face {
+  font-family: 'Material Symbols Rounded';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: block;
+  src: url('./assets/fonts/material-symbols-rounded.woff2') format('woff2');
+}
+
+@theme {
+  --font-sans: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', 'BIZ UDPGothic', system-ui, sans-serif;
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-paper-3: var(--paper-3);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-leaf: var(--leaf);
+  --color-leaf-soft: var(--leaf-soft);
+  --color-sky: var(--sky);
+  --color-sun: var(--sun);
+  --ease-spring: cubic-bezier(0.2, 0.9, 0.25, 1.15);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  --paper: #fbf6ec;
+  --paper-2: #f4ecdd;
+  --paper-3: #eadfcb;
+  --ink: #2a2017;
+  --ink-2: #66574a;
+  /* A touch darker than before so small secondary text reads better on paper (about 3.8:1). */
+  --ink-3: #8a7a6b;
+  --line: rgb(42 32 23 / 0.1);
+  --accent: #ef6a3a;
+  --accent-ink: #ffffff;
+  --accent-soft: #fde3d6;
+  /* Orange used as text (not as a fill) is darker, so small orange words stay readable on paper (about 4.5:1). */
+  --accent-text: #bf4d1d;
+  --leaf: #3c8a73;
+  --leaf-soft: #d9efe6;
+  --sky: #5d9bd6;
+  --sun: #f2b53c;
+  --shadow-card: 0 1px 2px rgb(60 40 20 / 0.06), 0 8px 24px -8px rgb(60 40 20 / 0.18);
+  /* The selected pill of a segmented control: even above and below, so it never looks pushed down. */
+  --shadow-tab: 0 0 0 1px rgb(60 40 20 / 0.06), 0 1px 6px rgb(0 0 0 / 0.18);
+  --shadow-float: 0 2px 6px rgb(30 20 10 / 0.12), 0 18px 48px -12px rgb(30 20 10 / 0.35);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --paper: #17130f;
+    --paper-2: #221c16;
+    --paper-3: #2f271f;
+    --ink: #f5ece0;
+    --ink-2: #c4b5a4;
+    --ink-3: #8b7c6c;
+    --line: rgb(245 236 224 / 0.1);
+    --accent: #ff8257;
+    --accent-ink: #1b120c;
+    --accent-soft: #4a2617;
+    --accent-text: var(--accent);
+    --leaf: #6cc3a6;
+    --leaf-soft: #17342b;
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -8px rgb(0 0 0 / 0.6);
+    --shadow-tab: 0 0 0 1px rgb(0 0 0 / 0.3), 0 1px 6px rgb(0 0 0 / 0.4);
+    --shadow-float: 0 2px 6px rgb(0 0 0 / 0.4), 0 18px 48px -12px rgb(0 0 0 / 0.7);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --paper: #17130f;
+  --paper-2: #221c16;
+  --paper-3: #2f271f;
+  --ink: #f5ece0;
+  --ink-2: #c4b5a4;
+  --ink-3: #8b7c6c;
+  --line: rgb(245 236 224 / 0.1);
+  --accent: #ff8257;
+  --accent-ink: #1b120c;
+  --accent-soft: #4a2617;
+  --accent-text: var(--accent);
+  --leaf: #6cc3a6;
+  --leaf-soft: #17342b;
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: clamp(15px, 0.3vw + 14px, 17px);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+  font-feature-settings: 'palt' 1;
+}
+
+/* Layered so text-* utilities on buttons win over the inherited color. */
+@layer base {
+  button {
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+  }
+}
+
+:focus-visible {
+  outline: 3px solid color-mix(in oklab, var(--accent) 70%, transparent);
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
+/* iOS zooms the whole page into a text field whose text is under 16px, and stays zoomed after leaving it. */
+@supports (-webkit-touch-callout: none) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
+
+/* Text fields show focus on the frame around them, never as a second ring inside it. */
+input:not([type='checkbox'], [type='radio'], [type='file']):focus-visible,
+textarea:focus-visible {
+  outline: none;
+}
+
+/* The rounded search and name fields (the frame is the field's direct parent) light up like .field does. */
+:not(.field):has(> :is(input:not([type='checkbox'], [type='radio'], [type='file']), textarea):focus-visible) {
+  box-shadow:
+    0 0 0 2px color-mix(in oklab, var(--accent) 60%, transparent),
+    0 0 0 6px color-mix(in oklab, var(--accent) 18%, transparent);
+}
+
+/* In a layer so Tailwind utilities (hidden, sm:inline, text sizes) can override it. */
+@layer components {
+  .ms {
+    font-family: 'Material Symbols Rounded';
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    /* Flex-centring keeps the glyph in the middle of its box even if the OS or browser scales text (Android text zoom). */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    flex-shrink: 0;
+    white-space: nowrap;
+    direction: ltr;
+    font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    font-variation-settings: 'FILL' var(--fill, 0), 'wght' var(--wght, 500), 'GRAD' 0, 'opsz' 24;
+    transition: font-variation-settings 0.25s var(--ease-out-soft);
+    user-select: none;
+  }
+}
+
+.paper-grain {
+  background-image: radial-gradient(rgb(120 90 60 / 0.06) 1px, transparent 1px);
+  background-size: 6px 6px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.prose-mono {
+  line-height: 1.9;
+}
+.prose-mono h3 {
+  font-weight: 900;
+  font-size: 1.12em;
+  margin: 1.6em 0 0.5em;
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+}
+.prose-mono h3::before {
+  content: '';
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 999px;
+  background: var(--accent);
+  flex: none;
+}
+.prose-mono p {
+  margin: 0.6em 0;
+}
+.prose-mono ul,
+.prose-mono ol {
+  margin: 0.6em 0;
+  padding-left: 1.3em;
+}
+.prose-mono li {
+  margin: 0.3em 0;
+}
+.prose-mono li::marker {
+  color: var(--accent);
+}
+.prose-mono strong {
+  font-weight: 900;
+  background: linear-gradient(transparent 62%, color-mix(in oklab, var(--sun) 45%, transparent) 62%);
+}
+.prose-mono a {
+  color: var(--leaf);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Wrap only between phrases, so a line never ends in the middle of a word ("のこさ / ないよ", "撮 / ります").
+   The break points are the spaces in children's copy (分かち書き), the <wbr> marks that <Phrases> puts into
+   authored copy, and punctuation. A phrase too long for the line still breaks. */
+.phrase-wrap {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+
+/* Furigana: small readings that sit in the line's leading, so lines with and without ruby keep the same spacing. */
+ruby {
+  ruby-position: over;
+  ruby-align: center;
+}
+rt {
+  font-size: 0.5em;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  color: color-mix(in oklab, currentColor 72%, transparent);
+  font-feature-settings: normal;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.prose-mono ruby {
+  line-height: 1;
+}
+/* Readers who get furigana also get a little more room between lines for it. */
+:root:is([data-stage='lower'], [data-stage='upper']) .prose-mono {
+  line-height: 2.1;
+}
+
+/* The youngest readers get the explanation one size larger. */
+:root[data-stage='lower'] .prose-mono,
+:root[data-stage='lower'] [data-speak]:not([class*='text-[']) {
+  font-size: 1.12em;
+}
+
+/* Read-aloud: the block being spoken gets a soft marker; the spread shadow pads it without shifting layout. */
+.prose-mono :is(h3, h4, p, li),
+[data-speak] {
+  border-radius: 10px;
+  transition: background-color 0.3s var(--ease-out-soft), box-shadow 0.3s var(--ease-out-soft);
+}
+.tts-on {
+  background-color: color-mix(in oklab, var(--sun) 32%, transparent);
+  box-shadow: 0 0 0 6px color-mix(in oklab, var(--sun) 32%, transparent);
+}
+
+.caret::after {
+  content: '';
+  display: inline-block;
+  width: 0.5em;
+  height: 1.1em;
+  margin-left: 2px;
+  vertical-align: -0.18em;
+  border-radius: 3px;
+  background: var(--accent);
+  animation: caret 0.9s steps(2) infinite;
+}
+
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--paper-2) 25%, var(--paper-3) 50%, var(--paper-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+  border-radius: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Android (app and browser) pays a lot for live backdrop blur, so drop it there.
+   Only the unprefixed property: with both, the minifier keeps just -webkit-, which Chrome ignores. */
+.no-blur [class*='backdrop-blur'] {
+  backdrop-filter: none !important;
+}
+.native body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.native input,
+.native textarea,
+.native .prose-mono {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* iOS: web-drawn glass buttons follow the Liquid Glass look of the native chrome (bright rim, inner highlight, saturated blur). */
+.platform-ios .glass {
+  background: rgb(255 255 255 / 0.12);
+  border-color: rgb(255 255 255 / 0.32);
+  -webkit-backdrop-filter: blur(18px) saturate(1.8);
+  backdrop-filter: blur(18px) saturate(1.8);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.45), inset 0 -1px 0 rgb(255 255 255 / 0.08), 0 8px 24px -10px rgb(0 0 0 / 0.45);
+}
+
+/* Taller hit areas keep the original pills centred without overlapping neighbours. */
+.hit-44 { min-height: 44px; }
+.hit-44 > .hit-pill { top: 4px; bottom: 4px; }
+.topic-tabs .hit-44 > .hit-pill { top: 2px; bottom: 2px; }
+.filter-pill { padding-top: 0; padding-bottom: 0; }
+.topic-tabs { mask-image: linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent); }
+@media (max-height: 760px) {
+  .camera-fallback { padding-top: 76px; padding-bottom: 190px; }
+  .camera-pick { width: 96px; height: 96px; margin-bottom: 12px; border-radius: 28px; }
+  .camera-sample-title { margin-top: 12px; }
+  .camera-sample { width: 76px; }
+}
+@media (max-width: 420px) {
+  .correction-form { flex-wrap: wrap; border-radius: 24px; padding: 12px; }
+  .correction-form input { flex-basis: 100%; padding-left: 8px; }
+  .correction-form button { margin-left: auto; }
+}
+
+@media (max-height: 700px) {
+  .age-picker > h2 { margin-top: 4px; }
+  .age-picker > .flex { margin-top: 8px; }
+  .age-picker > [role="group"] { margin-top: 8px; gap: 4px; }
+  .age-picker > [aria-live] { margin-top: 4px; min-height: 44px; }
+  .age-picker > [aria-live] p { padding-top: 8px; padding-bottom: 8px; }
+  .age-picker > button { margin-top: 4px; }
+}
+
+/* Orange words use the darker text shade (see --accent-text); filled buttons and badges keep the brand orange. */
+.text-accent {
+  color: var(--accent-text);
+}

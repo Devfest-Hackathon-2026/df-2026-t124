@@ -1,0 +1,67 @@
+name: Deploy web to Firebase Hosting
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - 'firebase.json'
+      - 'infra/deploy-hosting.mjs'
+      - 'infra/write-web-env.mjs'
+      - '.github/workflows/deploy-web.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-web
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  PROJECT: monoshiri-df26
+  SITE: monoshiri
+  VITE_API_BASE: https://monoshiri-api-557874444860.asia-northeast1.run.app
+  VITE_RECAPTCHA_KEY: 6Ld8LhYuAAAAAMWtZBNUPz69npujKk4dqSGQqJsu
+
+jobs:
+  deploy:
+    # Forks have no access to the Google Cloud project, so only the upstream repository deploys.
+    if: github.repository == 'Ryuto42/monoshiri'
+    runs-on: ubuntu-26.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      # Keyless: GitHub's OIDC token is exchanged for a short-lived token of a Hosting-only service account.
+      - uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: projects/557874444860/locations/global/workloadIdentityPools/github/providers/monoshiri-repo
+          service_account: github-deployer@monoshiri-df26.iam.gserviceaccount.com
+
+      - uses: google-github-actions/setup-gcloud@v3
+
+      - name: Install
+        run: npm ci
+        working-directory: web
+
+      - name: Typecheck and lint
+        run: npx tsc -b && npx oxlint --deny-warnings src
+        working-directory: web
+
+      - name: Write build env
+        run: node infra/write-web-env.mjs
+
+      - name: Build
+        run: npx vite build
+        working-directory: web
+
+      - name: Deploy
+        run: node infra/deploy-hosting.mjs
